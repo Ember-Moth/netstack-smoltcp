@@ -1,12 +1,10 @@
 # Netstack Smoltcp
 
-A netstack for the special purpose of turning packets from/to a TUN interface into TCP streams and UDP packets. It uses smoltcp-rs as the backend netstack.
-
-[中文版 README](README_CN.md)
+一个用于特殊场景的网络栈：把来自/发往 TUN 接口的 IP 包转换为 TCP 流和 UDP 数据报。底层使用 smoltcp-rs 作为网络栈实现。
 
 [![Crates.io][crates-badge]][crates-url]
 [![MIT licensed][mit-badge]][mit-url]
-[![Apache licensed, Version 2.0][apache-badge]][apache-url]
+[![Apache licensed][apache-badge]][apache-url]
 [![Build Status][actions-badge]][actions-url]
 
 [crates-badge]: https://img.shields.io/crates/v/netstack-smoltcp.svg
@@ -18,23 +16,23 @@ A netstack for the special purpose of turning packets from/to a TUN interface in
 [actions-badge]: https://github.com/automesh-network/netstack-smoltcp/workflows/CI/badge.svg
 [actions-url]: https://github.com/automesh-network/netstack-smoltcp/actions?query=workflow%3ACI+branch%3Amain
 
-## Features
+## 特性
 
-- Supports Future Send and non-Send, mostly pepole use Send.
-- Supports ICMP protocol drive by TCP runner to use ICMP ping.
-- Supports filtering packets by source and destination IP addresses.
-- Can read IP packets from netstack, write IP packets to netstack.
-- Can receive TcpStream from TcpListener exposed from netstack.
-- Can receive UDP datagram from UdpSocket exposed from netstack.
-- Implements popular future streaming traits and asynchronous IO traits:
-    * TcpListener implements futures Stream/Sink trait
-    * TcpStream implements tokio AsyncRead/AsyncWrite trait
-    * UdpSocket(ReadHalf/WriteHalf) implements futures Stream/Sink trait.
+- 支持 Future 的 Send 与非 Send 两种用法（多数用户使用 Send）。
+- 支持由 TCP runner 驱动的 ICMP 协议，可用于 ICMP ping。
+- 支持按源/目的 IP 地址过滤包。
+- 可从 netstack 读取 IP 包，也可向 netstack 写入 IP 包。
+- 可从 netstack 暴露的 TcpListener 接收 TcpStream。
+- 可从 netstack 暴露的 UdpSocket 接收 UDP 数据报。
+- 实现了常见的 Future 流式 trait 和异步 IO trait：
+    * TcpListener 实现 futures 的 Stream/Sink trait
+    * TcpStream 实现 tokio 的 AsyncRead/AsyncWrite trait
+    * UdpSocket（ReadHalf/WriteHalf）实现 futures 的 Stream/Sink trait
 
-## Platforms
+## 平台
 
-This crate provides lightweight netstack support for Linux, iOS, macOS, Android and Windows.
-Currently, it works on most targets, but mainly tested the popular platforms which includes:
+该 crate 为 Linux、iOS、macOS、Android 和 Windows 提供轻量级网络栈支持。
+目前能在大多数目标上工作，但主要在以下常用平台上测试：
 - linux-amd64: x86_64-unknown-linux-gnu
 - android-arm64: aarch64-linux-android
 - android-amd64: x86_64-linux-android
@@ -44,7 +42,7 @@ Currently, it works on most targets, but mainly tested the popular platforms whi
 - windows-amd64: x86_64-pc-windows-msvc
 - windows-arm64: aarch64-pc-windows-msvc
 
-## Example
+## 示例
 
 ```rust
 // let device = tun2::create_as_async(&cfg)?;
@@ -98,38 +96,36 @@ tokio::spawn(async move {
 });
 ```
 
-## Performance
+## 性能
 
-Typically, `netstack-smoltcp` will be used with an tun device, so a careful choice of TUN crate matters.
+通常 `netstack-smoltcp` 会配合 TUN 设备使用，因此选择合适的 TUN crate 很重要。
 
-[tun-rs](https://github.com/tun-rs/tun-rs) have better performance on **Linux** than [rust-tun](https://github.com/meh/rust-tun/) due to GSO/GRO which allow you to process the packets in batches.
+在 **Linux** 上，[tun-rs](https://github.com/tun-rs/tun-rs) 的性能优于 [rust-tun](https://github.com/meh/rust-tun/)，原因是 tun-rs 支持 GSO/GRO，可批量处理数据包。
 
-`bash scripts/bench-offload.sh` could tell that `tun-rs` boosts the performance by 4x. Try it out on your Linux machine!
+执行 `bash scripts/bench-offload.sh` 可以验证 tun-rs 带来的 4x 性能提升。建议在你的 Linux 机器上试试。
 
-The example for using `tun-rs` with `netstack-smoltcp` could be found at [forward-offload-linux.rs](examples/forward-offload-linux.rs)
+使用 tun-rs 搭配 netstack-smoltcp 的示例见 [forward-offload-linux.rs](examples/forward-offload-linux.rs)。
 
-For further tuning, refer to `tun-rs`'s detailed [README](https://github.com/tun-rs/tun-rs/blob/main/README.md)
+更多调优内容可参考 tun-rs 的详细 [README](https://github.com/tun-rs/tun-rs/blob/main/README.md)。
 
-## License
+## 许可证
 
-This project is licensed under either of
+本项目采用以下许可证之一：
 
- * Apache License, Version 2.0, ([LICENSE-APACHE](LICENSE-APACHE) or
-   https://www.apache.org/licenses/LICENSE-2.0)
- * MIT license ([LICENSE-MIT](LICENSE-MIT) or
-   https://opensource.org/licenses/MIT)
+ * Apache License, Version 2.0（[LICENSE-APACHE](LICENSE-APACHE) 或
+   https://www.apache.org/licenses/LICENSE-2.0）
+ * MIT license（[LICENSE-MIT](LICENSE-MIT) 或
+   https://opensource.org/licenses/MIT）
 
-at your option.
+你可自行选择其一。
 
-### Contribution
+### 贡献
 
-Unless you explicitly state otherwise, any contribution intentionally submitted
-for inclusion in netstack-smoltcp by you, as defined in the Apache-2.0 license,
-shall be dual licensed as above, without any additional terms or conditions.
+除非你明确声明，否则你有意提交并被纳入 netstack-smoltcp 的任何贡献（按 Apache-2.0 许可证定义）均按上述双许可证授权，不附加任何额外条款或条件。
 
-## Inspired By
+## 灵感来源
 
-Special thanks to these amazing projects that inspired netstack-smoltcp (in no particular order):
+特别感谢以下优秀项目对 netstack-smoltcp 的启发（排名不分先后）：
 - [shadowsocks-rust](https://github.com/shadowsocks/shadowsocks-rust/)
 - [netstack-lwip](https://github.com/eycorsican/netstack-lwip/)
 - [rust-tun-active](https://github.com/tun2proxy/rust-tun)
